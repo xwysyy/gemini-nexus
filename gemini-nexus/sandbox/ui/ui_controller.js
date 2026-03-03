@@ -66,7 +66,7 @@ export class UIController {
             // Official API Models
             opts = [
                 { val: 'gemini-3-flash-preview', txt: 'Gemini 3 Flash' },
-                { val: 'gemini-3-pro-preview', txt: 'Gemini 3 Pro' }
+                { val: 'gemini-3-pro-preview', txt: 'Gemini Pro' }
             ];
         } else if (provider === 'openai') {
             // OpenAI Compatible: Support multiple models comma-separated
@@ -84,7 +84,7 @@ export class UIController {
             opts = [
                 { val: 'gemini-3-flash', txt: 'Fast' },
                 { val: 'gemini-3-flash-thinking', txt: 'Thinking' },
-                { val: 'gemini-3-pro', txt: '3 Pro' }
+                { val: 'gemini-3-pro', txt: 'Pro' }
             ];
         }
         

@@ -82,7 +82,8 @@ export class AuthManager {
                 atValue: params.atValue,
                 blValue: params.blValue,
                 authUser: params.authUserIndex || targetIndex,
-                contextIds: ['', '', '']
+                contextIds: ['', '', ''],
+                webModelIds: params.webModelIds || null
             };
             return this.currentContext;
         } catch (e) {

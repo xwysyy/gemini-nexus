@@ -225,7 +225,7 @@
             if (provider === 'official') {
                 opts = [
                     { val: 'gemini-3-flash-preview', txt: 'Gemini 3 Flash' },
-                    { val: 'gemini-3-pro-preview', txt: 'Gemini 3 Pro' }
+                    { val: 'gemini-3-pro-preview', txt: 'Gemini Pro' }
                 ];
             } else if (provider === 'openai') {
                 const rawModels = settings.openaiModel || "";
@@ -239,7 +239,7 @@
                 opts = [
                     { val: 'gemini-3-flash', txt: 'Fast' },
                     { val: 'gemini-3-flash-thinking', txt: 'Thinking' },
-                    { val: 'gemini-3-pro', txt: '3 Pro' }
+                    { val: 'gemini-3-pro', txt: 'Pro' }
                 ];
             }
 
