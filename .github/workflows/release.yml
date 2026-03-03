@@ -38,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME#v}"
-          manifest="$(node -e "import fs from 'node:fs'; console.log(JSON.parse(fs.readFileSync('gemini-nexus/manifest.json','utf8')).version)")"
+          manifest="$(node -e "const fs = require('fs'); console.log(JSON.parse(fs.readFileSync('gemini-nexus/manifest.json','utf8')).version)")"
           if [[ "$tag" != "$manifest" ]]; then
             echo "Tag version (v$tag) does not match manifest.json version ($manifest)."
             exit 1
@@ -57,4 +57,3 @@ jobs:
         with:
           files: gemini-nexus/release/*.zip
           fail_on_unmatched_files: true
-

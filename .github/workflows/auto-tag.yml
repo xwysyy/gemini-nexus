@@ -1,0 +1,67 @@
+name: Auto Tag on Version Commit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create tag if commit message contains version
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("node:fs");
+
+            const message = context.payload.head_commit?.message ?? "";
+            const match = message.match(/\bv(\d+\.\d+\.\d+)\b/);
+
+            if (!match) {
+              core.info("No version like vX.Y.Z found in the head commit message; skipping.");
+              return;
+            }
+
+            const version = match[1];
+            const tag = `v${version}`;
+
+            const manifest = JSON.parse(
+              fs.readFileSync("gemini-nexus/manifest.json", "utf8"),
+            );
+
+            if (manifest.version !== version) {
+              core.setFailed(
+                `Commit message version ${tag} does not match gemini-nexus/manifest.json version (${manifest.version}).`,
+              );
+              return;
+            }
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const ref = `tags/${tag}`;
+
+            try {
+              await github.rest.git.getRef({ owner, repo, ref });
+              core.info(`Tag ${tag} already exists; skipping.`);
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+
+            await github.rest.git.createRef({
+              owner,
+              repo,
+              ref: `refs/${ref}`,
+              sha: context.sha,
+            });
+
+            core.notice(`Created tag ${tag} at ${context.sha}. This will trigger the release workflow.`);
+
