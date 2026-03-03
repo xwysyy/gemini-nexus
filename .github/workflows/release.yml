@@ -1,0 +1,60 @@
+name: Build & Release (Chrome Extension)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: gemini-nexus/package-lock.json
+
+      - name: Install
+        working-directory: gemini-nexus
+        run: npm ci
+
+      - name: Build & Package
+        working-directory: gemini-nexus
+        run: npm run package
+
+      - name: Validate tag matches manifest version
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(node -e "import fs from 'node:fs'; console.log(JSON.parse(fs.readFileSync('gemini-nexus/manifest.json','utf8')).version)")"
+          if [[ "$tag" != "$manifest" ]]; then
+            echo "Tag version (v$tag) does not match manifest.json version ($manifest)."
+            exit 1
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-nexus-zip
+          path: gemini-nexus/release/*.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: gemini-nexus/release/*.zip
+          fail_on_unmatched_files: true
+

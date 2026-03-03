@@ -35,13 +35,37 @@ Gemini Nexus can optionally connect to an external MCP server (via **SSE** or **
     npm install
     ```
 
-2.  Build the extension:
+2.  Build the extension (creates a Chrome-loadable `dist/`):
     ```bash
-    npm run build
+    npm run build:extension
     ```
 
 3.  Load into Chrome:
     *   Open `chrome://extensions/`
     *   Enable "Developer mode"
     *   Click "Load unpacked"
-    *   Select the `dist` folder (or root if running in dev mode without bundling).
+    *   Select the `dist` folder.
+
+## Package (ZIP for Releases / Chrome Web Store)
+
+```bash
+npm run package
+```
+
+Outputs a versioned ZIP under `release/` (e.g. `release/gemini-nexus-v4.2.3.zip`), with `manifest.json` at the ZIP root.
+
+## GitHub Actions
+
+This repo includes two workflows:
+
+1. `Build & Release (Chrome Extension)` (`.github/workflows/release.yml`)
+   - On tag push (e.g. `v4.2.3`): builds and uploads the ZIP to GitHub Releases.
+   - On manual dispatch: builds and uploads the ZIP as a workflow artifact.
+
+2. `Publish to Chrome Web Store` (`.github/workflows/chrome-webstore.yml`)
+   - Manual dispatch only.
+   - Requires repository secrets:
+     - `CWS_EXTENSION_ID`
+     - `CWS_CLIENT_ID`
+     - `CWS_CLIENT_SECRET`
+     - `CWS_REFRESH_TOKEN`
