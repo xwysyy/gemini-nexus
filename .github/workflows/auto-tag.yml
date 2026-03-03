@@ -23,26 +23,30 @@ jobs:
             const fs = require("node:fs");
 
             const message = context.payload.head_commit?.message ?? "";
-            const match = message.match(/\bv(\d+\.\d+\.\d+)\b/);
-
-            if (!match) {
-              core.info("No version like vX.Y.Z found in the head commit message; skipping.");
-              return;
-            }
-
-            const version = match[1];
-            const tag = `v${version}`;
-
             const manifest = JSON.parse(
               fs.readFileSync("gemini-nexus/manifest.json", "utf8"),
             );
 
-            if (manifest.version !== version) {
-              core.setFailed(
-                `Commit message version ${tag} does not match gemini-nexus/manifest.json version (${manifest.version}).`,
-              );
+            const manifestVersion = manifest.version;
+
+            const candidates = Array.from(
+              message.matchAll(/\bv?(\d+\.\d+\.\d+(?:\.\d+)?)\b/g),
+            ).map((m) => m[1]);
+
+            if (!candidates.includes(manifestVersion)) {
+              if (candidates.length > 0) {
+                core.info(
+                  `Commit message contains version(s) [${candidates.join(", ")}] but none match manifest version (${manifestVersion}); skipping.`,
+                );
+              } else {
+                core.info(
+                  "No version like X.Y.Z or vX.Y.Z found in the head commit message; skipping.",
+                );
+              }
               return;
             }
+
+            const tag = `v${manifestVersion}`;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
@@ -64,4 +68,3 @@ jobs:
             });
 
             core.notice(`Created tag ${tag} at ${context.sha}. This will trigger the release workflow.`);
-

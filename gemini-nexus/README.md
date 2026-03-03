@@ -71,5 +71,5 @@ This repo includes two workflows:
      - `CWS_REFRESH_TOKEN`
 
 3. `Auto Tag on Version Commit` (`.github/workflows/auto-tag.yml`)
-   - On push to `main`, if the **head commit message** contains `vX.Y.Z` (example: `chore(release): v4.2.3`), it creates the tag automatically.
+   - On push to `main`, if the **head commit message** contains the current `manifest.json` version (e.g. `4.2.3` or `v4.2.3`), it creates the tag automatically.
    - The tag will then trigger the release workflow above.
