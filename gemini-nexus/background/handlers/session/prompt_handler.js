@@ -4,9 +4,9 @@ import { appendAiMessage } from '../../managers/history_manager.js';
 import { PromptBuilder } from './prompt/builder.js';
 
 export class PromptHandler {
-    constructor(sessionManager) {
+    constructor(sessionManager, imageHandler) {
         this.sessionManager = sessionManager;
-        this.builder = new PromptBuilder();
+        this.builder = new PromptBuilder(imageHandler);
         this.isCancelled = false;
     }
 
@@ -30,11 +30,16 @@ export class PromptHandler {
             try {
                 // 1. Build Initial Prompt (with Context separated)
                 const buildResult = await this.builder.build(request);
+                const mergedFiles = [
+                    ...(Array.isArray(request.files) ? request.files : []),
+                    ...(Array.isArray(buildResult.contextFiles) ? buildResult.contextFiles : [])
+                ];
+
                 const result = await this.sessionManager.handleSendPrompt({
                     ...request,
                     text: buildResult.userPrompt,
                     systemInstruction: buildResult.systemInstruction,
-                    files: request.files
+                    files: mergedFiles
                 }, onUpdate);
 
                 if (this.isCancelled) return;

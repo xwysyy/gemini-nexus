@@ -40,14 +40,14 @@ Gemini Nexus integrates Google's Gemini models directly into your browsing exper
 npm run package
 ```
 
-Outputs a versioned ZIP under `release/` (e.g. `release/gemini-nexus-v4.2.5.zip`), with `manifest.json` at the ZIP root.
+Outputs a versioned ZIP under `release/` (e.g. `release/gemini-nexus-v4.2.6.zip`), with `manifest.json` at the ZIP root.
 
 ## GitHub Actions
 
 This repo includes two workflows:
 
 1. `Build & Release (Chrome Extension)` (`.github/workflows/release.yml`)
-   - On tag push (e.g. `v4.2.5`): builds and uploads the ZIP to GitHub Releases.
+   - On tag push (e.g. `v4.2.6`): builds and uploads the ZIP to GitHub Releases.
    - On manual dispatch: builds and uploads the ZIP as a workflow artifact.
 
 2. `Publish to Chrome Web Store` (`.github/workflows/chrome-webstore.yml`)

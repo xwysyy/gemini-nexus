@@ -75,6 +75,10 @@ export class AppMessageBridge {
             this.ui.settings.updateImageTools(payload);
             return;
         }
+        if (action === 'RESTORE_PAGE_CONTEXT_IMAGES') {
+            this.ui.settings.updatePageContextImages(payload);
+            return;
+        }
         if (action === 'RESTORE_ACCOUNT_INDICES') {
             this.ui.settings.updateAccountIndices(payload);
             return;

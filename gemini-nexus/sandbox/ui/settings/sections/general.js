@@ -13,16 +13,20 @@ export class GeneralSection {
         const get = (id) => document.getElementById(id);
         this.elements = {
             imageToolsToggle: get('image-tools-toggle'),
+            pageContextImagesToggle: get('page-context-images-toggle'),
             accountIndicesInput: get('account-indices-input'),
             sidebarRadios: document.querySelectorAll('input[name="sidebar-behavior"]')
         };
     }
 
     bindEvents() {
-        const { imageToolsToggle, sidebarRadios } = this.elements;
+        const { imageToolsToggle, pageContextImagesToggle, sidebarRadios } = this.elements;
 
         if (imageToolsToggle) {
             imageToolsToggle.addEventListener('change', (e) => this.fire('onImageToolsChange', e.target.checked));
+        }
+        if (pageContextImagesToggle) {
+            pageContextImagesToggle.addEventListener('change', (e) => this.fire('onPageContextImagesChange', e.target.checked));
         }
         if (sidebarRadios) {
             sidebarRadios.forEach(radio => {
@@ -33,8 +37,9 @@ export class GeneralSection {
         }
     }
 
-    setToggles(imageTools) {
+    setToggles(imageTools, pageContextImages) {
         if (this.elements.imageToolsToggle) this.elements.imageToolsToggle.checked = imageTools;
+        if (this.elements.pageContextImagesToggle) this.elements.pageContextImagesToggle.checked = pageContextImages === true;
     }
 
     setAccountIndices(val) {
@@ -51,9 +56,10 @@ export class GeneralSection {
     }
 
     getData() {
-        const { imageToolsToggle, accountIndicesInput } = this.elements;
+        const { imageToolsToggle, pageContextImagesToggle, accountIndicesInput } = this.elements;
         return {
             imageTools: imageToolsToggle ? imageToolsToggle.checked : true,
+            pageContextImages: pageContextImagesToggle ? pageContextImagesToggle.checked : false,
             accountIndices: accountIndicesInput ? accountIndicesInput.value : "0"
         };
     }

@@ -7,7 +7,7 @@ import { ContextHandler } from './session/context_handler.js';
 export class SessionMessageHandler {
     constructor(sessionManager, imageHandler) {
         this.sessionManager = sessionManager;
-        this.promptHandler = new PromptHandler(sessionManager);
+        this.promptHandler = new PromptHandler(sessionManager, imageHandler);
         this.quickAskHandler = new QuickAskHandler(sessionManager, imageHandler);
         this.contextHandler = new ContextHandler(sessionManager);
     }

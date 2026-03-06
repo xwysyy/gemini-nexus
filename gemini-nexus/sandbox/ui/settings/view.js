@@ -15,6 +15,7 @@ export class SettingsView {
         
         this.general = new GeneralSection({
             onImageToolsChange: (val) => this.fire('onImageToolsChange', val),
+            onPageContextImagesChange: (val) => this.fire('onPageContextImagesChange', val),
             onSidebarBehaviorChange: (val) => this.fire('onSidebarBehaviorChange', val)
         });
         
@@ -70,6 +71,7 @@ export class SettingsView {
         const data = {
             connection: connectionData,
             imageTools: generalData.imageTools,
+            pageContextImages: generalData.pageContextImages,
             accountIndices: generalData.accountIndices
         };
         
@@ -106,8 +108,8 @@ export class SettingsView {
     }
 
     // Delegation to General
-    setToggles(imageTools) {
-        this.general.setToggles(imageTools);
+    setToggles(imageTools, pageContextImages) {
+        this.general.setToggles(imageTools, pageContextImages);
     }
     
     setSidebarBehavior(behavior) {

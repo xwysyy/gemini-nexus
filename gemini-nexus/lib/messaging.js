@@ -48,6 +48,17 @@ export function saveImageToolsToStorage(enabled) {
     }, '*');
 }
 
+export function requestPageContextImagesFromStorage() {
+    window.parent.postMessage({ action: 'GET_PAGE_CONTEXT_IMAGES' }, '*');
+}
+
+export function savePageContextImagesToStorage(enabled) {
+    window.parent.postMessage({
+        action: 'SAVE_PAGE_CONTEXT_IMAGES',
+        payload: enabled
+    }, '*');
+}
+
 export function saveSidebarBehaviorToStorage(behavior) {
     window.parent.postMessage({
         action: 'SAVE_SIDEBAR_BEHAVIOR',

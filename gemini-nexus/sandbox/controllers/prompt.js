@@ -72,6 +72,7 @@ export class PromptController {
             files: files,
             model: selectedModel,
             includePageContext: this.app.pageContextActive,
+            includePageImagesContext: this.app.pageContextActive && this.ui.settings.pageContextImagesEnabled === true,
             sessionId: currentId
         });
     }
