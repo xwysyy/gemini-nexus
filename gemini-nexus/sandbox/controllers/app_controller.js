@@ -41,6 +41,7 @@ export class AppController {
         this.ui.chat.togglePageContext(this.pageContextActive);
         
         if (this.pageContextActive) {
+            this._applyPageContextPromptPreset();
             this._checkPageContent();
         }
     }
@@ -56,6 +57,15 @@ export class AppController {
     _checkPageContent() {
         this.ui.updateStatus(t('readingPage'));
         sendToBackground({ action: "CHECK_PAGE_CONTEXT" });
+    }
+
+    _applyPageContextPromptPreset() {
+        const preset = this.ui.settings.getPromptPreset('pageContextPrompt');
+        if (!preset || !this.ui.inputFn || this.ui.inputFn.value.trim()) return;
+
+        this.ui.inputFn.value = preset;
+        this.ui.inputFn.dispatchEvent(new Event('input'));
+        this.ui.inputFn.focus();
     }
 
     // --- Delegation to Sub-Controllers ---

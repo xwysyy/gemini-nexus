@@ -66,17 +66,16 @@ export class MessageBridge {
             this.frame.postMessage({ action: 'RESTORE_LANGUAGE', payload: this.state.getCached('geminiLanguage') });
             return;
         }
-        if (action === 'GET_IMAGE_TOOLS') {
-            chrome.storage.local.get(['geminiImageToolsEnabled'], (res) => {
-                const val = res.geminiImageToolsEnabled !== false;
-                this.frame.postMessage({ action: 'RESTORE_IMAGE_TOOLS', payload: val });
-            });
-            return;
-        }
         if (action === 'GET_PAGE_CONTEXT_IMAGES') {
             chrome.storage.local.get(['geminiPageContextImagesEnabled'], (res) => {
                 const val = res.geminiPageContextImagesEnabled !== false;
                 this.frame.postMessage({ action: 'RESTORE_PAGE_CONTEXT_IMAGES', payload: val });
+            });
+            return;
+        }
+        if (action === 'GET_TOOL_PROMPTS') {
+            chrome.storage.local.get(['geminiToolPrompts'], (res) => {
+                this.frame.postMessage({ action: 'RESTORE_TOOL_PROMPTS', payload: res.geminiToolPrompts || null });
             });
             return;
         }
@@ -117,8 +116,8 @@ export class MessageBridge {
         if (action === 'SAVE_MODEL') this.state.save('geminiModel', payload);
         if (action === 'SAVE_THEME') this.state.save('geminiTheme', payload);
         if (action === 'SAVE_LANGUAGE') this.state.save('geminiLanguage', payload);
-        if (action === 'SAVE_IMAGE_TOOLS') this.state.save('geminiImageToolsEnabled', payload);
         if (action === 'SAVE_PAGE_CONTEXT_IMAGES') this.state.save('geminiPageContextImagesEnabled', payload);
+        if (action === 'SAVE_TOOL_PROMPTS') this.state.save('geminiToolPrompts', payload);
         if (action === 'SAVE_SIDEBAR_BEHAVIOR') this.state.save('geminiSidebarBehavior', payload);
         if (action === 'SAVE_ACCOUNT_INDICES') this.state.save('geminiAccountIndices', payload);
         if (action === 'SAVE_CONNECTION_SETTINGS') {

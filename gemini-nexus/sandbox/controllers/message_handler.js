@@ -201,15 +201,22 @@ export class MessageHandler {
             this.imageManager.setFile(croppedBase64, 'image/png', 'snip.png');
             
             if (this.app.captureMode === 'ocr') {
-                // Change prompt to localized OCR instructions
-                this.ui.inputFn.value = t('ocrPrompt');
+                const prompt = this.ui.settings.getPromptPreset('ocrPrompt') || t('ocrPrompt');
+                this.ui.inputFn.value = prompt;
+                this.ui.inputFn.dispatchEvent(new Event('input'));
                 // Auto-send via the main controller
                 this.app.handleSendMessage(); 
             } else if (this.app.captureMode === 'screenshot_translate') {
-                // Change prompt to localized Translate instructions
-                this.ui.inputFn.value = t('screenshotTranslatePrompt');
+                const prompt = this.ui.settings.getPromptPreset('screenshotTranslatePrompt') || t('screenshotTranslatePrompt');
+                this.ui.inputFn.value = prompt;
+                this.ui.inputFn.dispatchEvent(new Event('input'));
                 this.app.handleSendMessage();
             } else {
+                const prompt = this.ui.settings.getPromptPreset('snipPrompt');
+                if (prompt) {
+                    this.ui.inputFn.value = prompt;
+                    this.ui.inputFn.dispatchEvent(new Event('input'));
+                }
                 this.ui.updateStatus("");
                 this.ui.inputFn.focus();
             }

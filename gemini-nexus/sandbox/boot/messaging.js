@@ -71,12 +71,12 @@ export class AppMessageBridge {
             }
             return;
         }
-        if (action === 'RESTORE_IMAGE_TOOLS') {
-            this.ui.settings.updateImageTools(payload);
-            return;
-        }
         if (action === 'RESTORE_PAGE_CONTEXT_IMAGES') {
             this.ui.settings.updatePageContextImages(payload);
+            return;
+        }
+        if (action === 'RESTORE_TOOL_PROMPTS') {
+            this.ui.settings.updateToolPrompts(payload);
             return;
         }
         if (action === 'RESTORE_ACCOUNT_INDICES') {

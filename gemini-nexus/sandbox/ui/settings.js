@@ -1,6 +1,6 @@
 
 // sandbox/ui/settings.js
-import { saveThemeToStorage, saveLanguageToStorage, saveSidebarBehaviorToStorage, saveImageToolsToStorage, requestImageToolsFromStorage, savePageContextImagesToStorage, requestPageContextImagesFromStorage, saveAccountIndicesToStorage, requestAccountIndicesFromStorage, saveConnectionSettingsToStorage, requestConnectionSettingsFromStorage, sendToBackground } from '../../lib/messaging.js';
+import { saveThemeToStorage, saveLanguageToStorage, saveSidebarBehaviorToStorage, savePageContextImagesToStorage, requestPageContextImagesFromStorage, saveToolPromptsToStorage, requestToolPromptsFromStorage, saveAccountIndicesToStorage, requestAccountIndicesFromStorage, saveConnectionSettingsToStorage, requestConnectionSettingsFromStorage, sendToBackground } from '../../lib/messaging.js';
 import { setLanguagePreference, getLanguagePreference } from '../core/i18n.js';
 import { SettingsView } from './settings/view.js';
 
@@ -8,8 +8,13 @@ export class SettingsController {
     constructor(callbacks) {
         this.callbacks = callbacks || {};
         
-        this.imageToolsEnabled = true;
         this.pageContextImagesEnabled = true;
+        this.toolPrompts = {
+            pageContextPrompt: "",
+            ocrPrompt: "",
+            screenshotTranslatePrompt: "",
+            snipPrompt: ""
+        };
         this.accountIndices = "0";
         
         // Connection State
@@ -31,7 +36,6 @@ export class SettingsController {
             onThemeChange: (theme) => this.setTheme(theme),
             onLanguageChange: (lang) => this.setLanguage(lang),
             
-            onImageToolsChange: (val) => { this.imageToolsEnabled = (val === 'on' || val === true); saveImageToolsToStorage(this.imageToolsEnabled); },
             onPageContextImagesChange: (val) => { this.pageContextImagesEnabled = (val === 'on' || val === true); savePageContextImagesToStorage(this.pageContextImagesEnabled); },
             onSidebarBehaviorChange: (val) => saveSidebarBehaviorToStorage(val),
             onDownloadLogs: () => this.downloadLogs()
@@ -65,13 +69,14 @@ export class SettingsController {
     handleOpen() {
         // Sync state to view
         this.view.setLanguageValue(getLanguagePreference());
-        this.view.setToggles(this.imageToolsEnabled, this.pageContextImagesEnabled);
+        this.view.setToggles(this.pageContextImagesEnabled);
+        this.view.setToolPrompts(this.toolPrompts);
         this.view.setAccountIndices(this.accountIndices);
         this.view.setConnectionSettings(this.connectionData);
         
         // Refresh from storage
-        requestImageToolsFromStorage();
         requestPageContextImagesFromStorage();
+        requestToolPromptsFromStorage();
         requestAccountIndicesFromStorage();
         requestConnectionSettingsFromStorage();
         
@@ -79,11 +84,14 @@ export class SettingsController {
     }
 
     saveSettings(data) {
-        this.imageToolsEnabled = data.imageTools;
-        saveImageToolsToStorage(this.imageToolsEnabled);
-
         this.pageContextImagesEnabled = data.pageContextImages === true;
         savePageContextImagesToStorage(this.pageContextImagesEnabled);
+
+        this.toolPrompts = {
+            ...this.toolPrompts,
+            ...(data.toolPrompts || {})
+        };
+        saveToolPromptsToStorage(this.toolPrompts);
         
         // Accounts
         let val = data.accountIndices.trim();
@@ -159,14 +167,17 @@ export class SettingsController {
         document.dispatchEvent(new CustomEvent('gemini-language-changed'));
     }
 
-    updateImageTools(enabled) {
-        this.imageToolsEnabled = enabled;
-        this.view.setToggles(this.imageToolsEnabled, this.pageContextImagesEnabled);
-    }
-
     updatePageContextImages(enabled) {
         this.pageContextImagesEnabled = enabled === true;
-        this.view.setToggles(this.imageToolsEnabled, this.pageContextImagesEnabled);
+        this.view.setToggles(this.pageContextImagesEnabled);
+    }
+
+    updateToolPrompts(prompts) {
+        this.toolPrompts = {
+            ...this.toolPrompts,
+            ...(prompts || {})
+        };
+        this.view.setToolPrompts(this.toolPrompts);
     }
     
     updateConnectionSettings(settings) {
@@ -188,6 +199,12 @@ export class SettingsController {
     updateAccountIndices(indicesString) {
         this.accountIndices = indicesString || "0";
         this.view.setAccountIndices(this.accountIndices);
+    }
+
+    getPromptPreset(key) {
+        return this.toolPrompts && typeof this.toolPrompts[key] === 'string'
+            ? this.toolPrompts[key].trim()
+            : "";
     }
 
     async fetchGithubData() {

@@ -12,19 +12,19 @@ export class GeneralSection {
     queryElements() {
         const get = (id) => document.getElementById(id);
         this.elements = {
-            imageToolsToggle: get('image-tools-toggle'),
             pageContextImagesToggle: get('page-context-images-toggle'),
+            pageContextPromptInput: get('page-context-prompt-input'),
+            ocrPromptInput: get('ocr-prompt-input'),
+            screenshotTranslatePromptInput: get('screenshot-translate-prompt-input'),
+            snipPromptInput: get('snip-prompt-input'),
             accountIndicesInput: get('account-indices-input'),
             sidebarRadios: document.querySelectorAll('input[name="sidebar-behavior"]')
         };
     }
 
     bindEvents() {
-        const { imageToolsToggle, pageContextImagesToggle, sidebarRadios } = this.elements;
+        const { pageContextImagesToggle, sidebarRadios } = this.elements;
 
-        if (imageToolsToggle) {
-            imageToolsToggle.addEventListener('change', (e) => this.fire('onImageToolsChange', e.target.checked));
-        }
         if (pageContextImagesToggle) {
             pageContextImagesToggle.addEventListener('change', (e) => this.fire('onPageContextImagesChange', e.target.checked));
         }
@@ -37,9 +37,22 @@ export class GeneralSection {
         }
     }
 
-    setToggles(imageTools, pageContextImages) {
-        if (this.elements.imageToolsToggle) this.elements.imageToolsToggle.checked = imageTools;
+    setToggles(pageContextImages) {
         if (this.elements.pageContextImagesToggle) this.elements.pageContextImagesToggle.checked = pageContextImages === true;
+    }
+
+    setToolPrompts(prompts = {}) {
+        const {
+            pageContextPromptInput,
+            ocrPromptInput,
+            screenshotTranslatePromptInput,
+            snipPromptInput
+        } = this.elements;
+
+        if (pageContextPromptInput) pageContextPromptInput.value = prompts.pageContextPrompt || "";
+        if (ocrPromptInput) ocrPromptInput.value = prompts.ocrPrompt || "";
+        if (screenshotTranslatePromptInput) screenshotTranslatePromptInput.value = prompts.screenshotTranslatePrompt || "";
+        if (snipPromptInput) snipPromptInput.value = prompts.snipPrompt || "";
     }
 
     setAccountIndices(val) {
@@ -56,10 +69,22 @@ export class GeneralSection {
     }
 
     getData() {
-        const { imageToolsToggle, pageContextImagesToggle, accountIndicesInput } = this.elements;
+        const {
+            pageContextImagesToggle,
+            pageContextPromptInput,
+            ocrPromptInput,
+            screenshotTranslatePromptInput,
+            snipPromptInput,
+            accountIndicesInput
+        } = this.elements;
         return {
-            imageTools: imageToolsToggle ? imageToolsToggle.checked : true,
             pageContextImages: pageContextImagesToggle ? pageContextImagesToggle.checked : false,
+            toolPrompts: {
+                pageContextPrompt: pageContextPromptInput ? pageContextPromptInput.value.trim() : "",
+                ocrPrompt: ocrPromptInput ? ocrPromptInput.value.trim() : "",
+                screenshotTranslatePrompt: screenshotTranslatePromptInput ? screenshotTranslatePromptInput.value.trim() : "",
+                snipPrompt: snipPromptInput ? snipPromptInput.value.trim() : ""
+            },
             accountIndices: accountIndicesInput ? accountIndicesInput.value : "0"
         };
     }

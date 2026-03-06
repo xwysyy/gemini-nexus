@@ -37,17 +37,6 @@ export function saveLanguageToStorage(lang) {
     }, '*');
 }
 
-export function requestImageToolsFromStorage() {
-    window.parent.postMessage({ action: 'GET_IMAGE_TOOLS' }, '*');
-}
-
-export function saveImageToolsToStorage(enabled) {
-    window.parent.postMessage({
-        action: 'SAVE_IMAGE_TOOLS',
-        payload: enabled
-    }, '*');
-}
-
 export function requestPageContextImagesFromStorage() {
     window.parent.postMessage({ action: 'GET_PAGE_CONTEXT_IMAGES' }, '*');
 }
@@ -56,6 +45,17 @@ export function savePageContextImagesToStorage(enabled) {
     window.parent.postMessage({
         action: 'SAVE_PAGE_CONTEXT_IMAGES',
         payload: enabled
+    }, '*');
+}
+
+export function requestToolPromptsFromStorage() {
+    window.parent.postMessage({ action: 'GET_TOOL_PROMPTS' }, '*');
+}
+
+export function saveToolPromptsToStorage(prompts) {
+    window.parent.postMessage({
+        action: 'SAVE_TOOL_PROMPTS',
+        payload: prompts
     }, '*');
 }
 

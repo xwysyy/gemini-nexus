@@ -5,18 +5,33 @@ export const GeneralSettingsTemplate = `
 
     <div class="shortcut-row" style="margin-bottom: 12px;">
         <div style="flex: 1;">
-            <label data-i18n="imageToolsToggle" style="font-weight: 500; display: block; margin-bottom: 2px;">Show Image Tools Button</label>
-            <span class="setting-desc" data-i18n="imageToolsToggleDesc">Show the AI button when hovering over images.</span>
-        </div>
-        <input type="checkbox" id="image-tools-toggle" style="width: 20px; height: 20px; cursor: pointer;">
-    </div>
-
-    <div class="shortcut-row" style="margin-bottom: 12px;">
-        <div style="flex: 1;">
             <label data-i18n="pageContextImagesToggle" style="font-weight: 500; display: block; margin-bottom: 2px;">Attach Page Images in Page Chat</label>
             <span class="setting-desc" data-i18n="pageContextImagesToggleDesc">When page chat is enabled, attach up to 10 compressed images from the current page as temporary context.</span>
         </div>
         <input type="checkbox" id="page-context-images-toggle" style="width: 20px; height: 20px; cursor: pointer;">
+    </div>
+
+    <div class="setting-group" style="margin-top: 16px;">
+        <h5 data-i18n="commonPrompts" style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: var(--text-primary);">Common Prompts</h5>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+                <label data-i18n="pageContextPromptLabel" style="font-weight: 500; display: block; margin-bottom: 4px;">Page</label>
+                <textarea id="page-context-prompt-input" class="shortcut-input" rows="2" style="width: 100%; text-align: left; box-sizing: border-box; resize: vertical;" data-i18n-placeholder="pageContextPromptPlaceholder" placeholder="Optional default prompt when enabling page chat."></textarea>
+            </div>
+            <div>
+                <label data-i18n="ocrPromptLabel" style="font-weight: 500; display: block; margin-bottom: 4px;">OCR</label>
+                <textarea id="ocr-prompt-input" class="shortcut-input" rows="2" style="width: 100%; text-align: left; box-sizing: border-box; resize: vertical;" data-i18n-placeholder="ocrPromptPlaceholder" placeholder="Optional override for OCR prompt."></textarea>
+            </div>
+            <div>
+                <label data-i18n="screenshotTranslatePromptLabel" style="font-weight: 500; display: block; margin-bottom: 4px;">Screenshot Translate</label>
+                <textarea id="screenshot-translate-prompt-input" class="shortcut-input" rows="2" style="width: 100%; text-align: left; box-sizing: border-box; resize: vertical;" data-i18n-placeholder="screenshotTranslatePromptPlaceholder" placeholder="Optional override for screenshot translation prompt."></textarea>
+            </div>
+            <div>
+                <label data-i18n="snipPromptLabel" style="font-weight: 500; display: block; margin-bottom: 4px;">Snip</label>
+                <textarea id="snip-prompt-input" class="shortcut-input" rows="2" style="width: 100%; text-align: left; box-sizing: border-box; resize: vertical;" data-i18n-placeholder="snipPromptPlaceholder" placeholder="Optional default prompt for screenshot analysis."></textarea>
+            </div>
+        </div>
     </div>
 
     <div class="shortcut-row" style="margin-bottom: 12px; align-items: flex-start;">

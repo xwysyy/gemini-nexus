@@ -17,8 +17,8 @@ export class StateManager {
             'geminiModel',
             'pendingImage',
             'geminiSidebarBehavior',
-            'geminiImageToolsEnabled',
             'geminiPageContextImagesEnabled',
+            'geminiToolPrompts',
             'geminiAccountIndices',
             'geminiApiKey',
             'geminiUseOfficialApi',
@@ -81,8 +81,8 @@ export class StateManager {
         // Model restore should happen after connection settings to ensure the correct list is active
         this.frame.postMessage({ action: 'RESTORE_MODEL', payload: this.data.geminiModel || 'gemini-2.5-flash' });
         
-        this.frame.postMessage({ action: 'RESTORE_IMAGE_TOOLS', payload: this.data.geminiImageToolsEnabled !== false });
         this.frame.postMessage({ action: 'RESTORE_PAGE_CONTEXT_IMAGES', payload: this.data.geminiPageContextImagesEnabled !== false });
+        this.frame.postMessage({ action: 'RESTORE_TOOL_PROMPTS', payload: this.data.geminiToolPrompts || null });
         this.frame.postMessage({ action: 'RESTORE_ACCOUNT_INDICES', payload: this.data.geminiAccountIndices || "0" });
 
         // 2. Pending Actions (Session Switch)
