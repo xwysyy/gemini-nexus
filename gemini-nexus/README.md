@@ -40,14 +40,14 @@ Gemini Nexus integrates Google's Gemini models directly into your browsing exper
 npm run package
 ```
 
-Outputs a versioned ZIP under `release/` (e.g. `release/gemini-nexus-v4.2.4.zip`), with `manifest.json` at the ZIP root.
+Outputs a versioned ZIP under `release/` (e.g. `release/gemini-nexus-v4.2.5.zip`), with `manifest.json` at the ZIP root.
 
 ## GitHub Actions
 
 This repo includes two workflows:
 
 1. `Build & Release (Chrome Extension)` (`.github/workflows/release.yml`)
-   - On tag push (e.g. `v4.2.4`): builds and uploads the ZIP to GitHub Releases.
+   - On tag push (e.g. `v4.2.5`): builds and uploads the ZIP to GitHub Releases.
    - On manual dispatch: builds and uploads the ZIP as a workflow artifact.
 
 2. `Publish to Chrome Web Store` (`.github/workflows/chrome-webstore.yml`)
@@ -58,6 +58,6 @@ This repo includes two workflows:
      - `CWS_CLIENT_SECRET`
      - `CWS_REFRESH_TOKEN`
 
-3. `Auto Tag on Manifest Version Change` (`.github/workflows/auto-tag.yml`)
+3. `Auto Release on Manifest Version Change` (`.github/workflows/auto-tag.yml`)
    - On push to `main`, if `gemini-nexus/manifest.json` `version` changed compared to the previous `main` head, it creates tag `v<version>` automatically.
-   - The tag then triggers the release workflow above.
+   - The same workflow then runs `npm ci`, `npm run package`, uploads the ZIP as an artifact, and publishes a GitHub Release for that tag.
