@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Gemini Nexus",
-  "version": "4.2.7",
+  "version": "4.2.8",
   "permissions": ["sidePanel", "storage", "scripting", "alarms", "downloads", "tabs"],
   "host_permissions": [
     "https://gemini.google.com/*",
