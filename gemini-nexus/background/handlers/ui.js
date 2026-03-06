@@ -3,10 +3,8 @@
 import { getActiveTabContent } from './session/utils.js';
 
 export class UIMessageHandler {
-    constructor(imageHandler, controlManager, mcpManager) {
+    constructor(imageHandler) {
         this.imageHandler = imageHandler;
-        this.controlManager = controlManager;
-        this.mcpManager = mcpManager;
     }
 
     handle(request, sender, sendResponse) {
@@ -96,13 +94,6 @@ export class UIMessageHandler {
             return true; 
         }
 
-        if (request.action === "TOGGLE_SIDE_PANEL_CONTROL") {
-            this._handleToggleSidePanelControl(request, sender).finally(() => {
-                 sendResponse({ status: "processed" });
-            });
-            return true;
-        }
-
         if (request.action === "INITIATE_CAPTURE") {
             (async () => {
                 const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -147,25 +138,6 @@ export class UIMessageHandler {
             return true;
         }
 
-        if (request.action === "GET_ACTIVE_SELECTION") {
-            (async () => {
-                const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-                if (tab) {
-                    try {
-                        const response = await chrome.tabs.sendMessage(tab.id, { action: "GET_SELECTION" });
-                        chrome.runtime.sendMessage({
-                            action: "SELECTION_RESULT",
-                            text: response ? response.selection : ""
-                        }).catch(() => {});
-                    } catch (e) {
-                        chrome.runtime.sendMessage({ action: "SELECTION_RESULT", text: "" }).catch(() => {});
-                    }
-                }
-                sendResponse({ status: "completed" });
-            })();
-            return true;
-        }
-        
         // --- PAGE CONTEXT CHECK ---
         if (request.action === "CHECK_PAGE_CONTEXT") {
             (async () => {
@@ -173,138 +145,6 @@ export class UIMessageHandler {
                 const length = content ? content.length : 0;
                 sendResponse({ action: "PAGE_CONTEXT_RESULT", length: length });
             })();
-            return true;
-        }
-
-        // --- MCP (External Tools) ---
-        if (request.action === "MCP_TEST_CONNECTION") {
-            (async () => {
-                try {
-                    if (!this.mcpManager) throw new Error("MCP manager not available");
-                    const url = (request.url || "").trim();
-                    const transport = (request.transport || "sse").toLowerCase();
-                    if (!url) throw new Error("Server URL is empty");
-
-                    const tools = await this.mcpManager.listTools({
-                        enableMcpTools: true,
-                        mcpTransport: transport,
-                        mcpServerUrl: url
-                    });
-
-                    sendResponse({
-                        action: "MCP_TEST_RESULT",
-                        ok: true,
-                        serverId: request.serverId || null,
-                        transport,
-                        url,
-                        toolsCount: Array.isArray(tools) ? tools.length : 0
-                    });
-                } catch (e) {
-                    sendResponse({
-                        action: "MCP_TEST_RESULT",
-                        ok: false,
-                        serverId: request.serverId || null,
-                        transport: request.transport || "sse",
-                        url: request.url || "",
-                        error: e.message || String(e)
-                    });
-                }
-            })();
-            return true;
-        }
-
-        if (request.action === "MCP_LIST_TOOLS") {
-            (async () => {
-                try {
-                    if (!this.mcpManager) throw new Error("MCP manager not available");
-                    const url = (request.url || "").trim();
-                    const transport = (request.transport || "sse").toLowerCase();
-                    if (!url) throw new Error("Server URL is empty");
-
-                    const tools = await this.mcpManager.listTools({
-                        enableMcpTools: true,
-                        mcpTransport: transport,
-                        mcpServerUrl: url
-                    });
-
-                    // Return only lightweight fields for UI
-                    const safeTools = Array.isArray(tools) ? tools.map(t => ({
-                        name: t.name,
-                        description: t.description || ""
-                    })) : [];
-
-                    sendResponse({
-                        action: "MCP_TOOLS_RESULT",
-                        ok: true,
-                        serverId: request.serverId || null,
-                        transport,
-                        url,
-                        tools: safeTools
-                    });
-                } catch (e) {
-                    sendResponse({
-                        action: "MCP_TOOLS_RESULT",
-                        ok: false,
-                        serverId: request.serverId || null,
-                        transport: request.transport || "sse",
-                        url: request.url || "",
-                        error: e.message || String(e),
-                        tools: []
-                    });
-                }
-            })();
-            return true;
-        }
-        
-        // --- TAB MANAGEMENT ---
-        
-        if (request.action === "GET_OPEN_TABS") {
-            (async () => {
-                const tabs = await chrome.tabs.query({ currentWindow: true });
-                const safeTabs = tabs.map(t => ({
-                    id: t.id,
-                    title: t.title,
-                    url: t.url,
-                    favIconUrl: t.favIconUrl,
-                    active: t.active
-                }));
-                
-                // Get the currently locked tab ID to inform UI state
-                const lockedTabId = this.controlManager ? this.controlManager.getTargetTabId() : null;
-
-                chrome.runtime.sendMessage({
-                    action: "OPEN_TABS_RESULT",
-                    tabs: safeTabs,
-                    lockedTabId: lockedTabId
-                }).catch(() => {});
-                sendResponse({ status: "completed" });
-            })();
-            return true;
-        }
-        
-        if (request.action === "SWITCH_TAB") {
-            // tabId can be null to unlock
-            if (this.controlManager) {
-                this.controlManager.setTargetTab(request.tabId || null);
-            }
-            // Only switch visual tab if a specific ID is provided AND switchVisual is not explicitly false
-            if (request.tabId && request.switchVisual !== false) {
-                chrome.tabs.update(request.tabId, { active: true }).catch(err => console.warn(err));
-            }
-            sendResponse({ status: "switched" });
-            return true;
-        }
-
-        // --- BROWSER CONTROL TOGGLE ---
-        if (request.action === "TOGGLE_BROWSER_CONTROL") {
-            if (this.controlManager) {
-                if (request.enabled) {
-                    this.controlManager.enableControl();
-                } else {
-                    this.controlManager.disableControl();
-                }
-            }
-            sendResponse({ status: "processed" });
             return true;
         }
 
@@ -318,7 +158,6 @@ export class UIMessageHandler {
 
             const updateOps = {};
             if (request.sessionId) updateOps.pendingSessionId = request.sessionId;
-            if (request.mode) updateOps.pendingMode = request.mode;
 
             if (Object.keys(updateOps).length > 0) {
                 await chrome.storage.local.set(updateOps);
@@ -339,48 +178,7 @@ export class UIMessageHandler {
                         sessionId: request.sessionId
                     }).catch(() => {});
                 }
-                if (request.mode === 'browser_control') {
-                    chrome.runtime.sendMessage({
-                        action: "ACTIVATE_BROWSER_CONTROL"
-                    }).catch(() => {});
-                }
             }, 500);
-        }
-    }
-
-    async _handleToggleSidePanelControl(request, sender) {
-        if (!sender.tab) return;
-        
-        const tabId = sender.tab.id;
-        const currentLock = this.controlManager ? this.controlManager.getTargetTabId() : null;
-        
-        // Is Browser Control active for this tab?
-        const isControlActive = (currentLock === tabId);
-        
-        if (isControlActive) {
-            // --- TOGGLE OFF ---
-            
-            // 1. Disable Control (Detach debugger)
-            if (this.controlManager) {
-                await this.controlManager.disableControl();
-            }
-            
-            // 2. Close Side Panel (Workaround: disable then enable)
-            try {
-                // This effectively closes the side panel for this tab
-                await chrome.sidePanel.setOptions({ tabId, enabled: false });
-                
-                // Re-enable it quickly so it can be opened again later
-                setTimeout(() => {
-                    chrome.sidePanel.setOptions({ tabId, enabled: true, path: 'sidepanel/index.html' });
-                }, 250); 
-            } catch (e) {
-                console.error("Failed to toggle side panel close:", e);
-            }
-            
-        } else {
-            // --- TOGGLE ON ---
-            await this._handleOpenSidePanel({ ...request, mode: 'browser_control' }, sender);
         }
     }
 }

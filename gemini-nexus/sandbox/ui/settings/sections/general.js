@@ -12,7 +12,6 @@ export class GeneralSection {
     queryElements() {
         const get = (id) => document.getElementById(id);
         this.elements = {
-            textSelectionToggle: get('text-selection-toggle'),
             imageToolsToggle: get('image-tools-toggle'),
             accountIndicesInput: get('account-indices-input'),
             sidebarRadios: document.querySelectorAll('input[name="sidebar-behavior"]')
@@ -20,11 +19,8 @@ export class GeneralSection {
     }
 
     bindEvents() {
-        const { textSelectionToggle, imageToolsToggle, sidebarRadios } = this.elements;
+        const { imageToolsToggle, sidebarRadios } = this.elements;
 
-        if (textSelectionToggle) {
-            textSelectionToggle.addEventListener('change', (e) => this.fire('onTextSelectionChange', e.target.checked));
-        }
         if (imageToolsToggle) {
             imageToolsToggle.addEventListener('change', (e) => this.fire('onImageToolsChange', e.target.checked));
         }
@@ -37,8 +33,7 @@ export class GeneralSection {
         }
     }
 
-    setToggles(textSelection, imageTools) {
-        if (this.elements.textSelectionToggle) this.elements.textSelectionToggle.checked = textSelection;
+    setToggles(imageTools) {
         if (this.elements.imageToolsToggle) this.elements.imageToolsToggle.checked = imageTools;
     }
 
@@ -56,9 +51,8 @@ export class GeneralSection {
     }
 
     getData() {
-        const { textSelectionToggle, imageToolsToggle, accountIndicesInput } = this.elements;
+        const { imageToolsToggle, accountIndicesInput } = this.elements;
         return {
-            textSelection: textSelectionToggle ? textSelectionToggle.checked : true,
             imageTools: imageToolsToggle ? imageToolsToggle.checked : true,
             accountIndices: accountIndicesInput ? accountIndicesInput.value : "0"
         };

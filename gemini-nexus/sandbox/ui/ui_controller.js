@@ -4,7 +4,6 @@ import { ChatController } from './chat.js';
 import { SidebarController } from './sidebar.js';
 import { SettingsController } from './settings.js';
 import { ViewerController } from './viewer.js';
-import { TabSelectorController } from './tab_selector.js';
 
 export class UIController {
     constructor(elements) {
@@ -24,15 +23,12 @@ export class UIController {
         });
         
         this.viewer = new ViewerController();
-        
-        this.tabSelector = new TabSelectorController();
 
         // Properties exposed for external use (AppController/MessageHandler)
         this.inputFn = this.chat.inputFn;
         this.historyDiv = this.chat.historyDiv;
         this.sendBtn = this.chat.sendBtn;
         this.modelSelect = elements.modelSelect;
-        this.tabSwitcherBtn = document.getElementById('tab-switcher-btn');
 
         // Initialize Layout Detection
         this.checkLayout();
@@ -154,18 +150,6 @@ export class UIController {
     }
 
     // Settings
-    updateShortcuts(payload) { this.settings.updateShortcuts(payload); }
     updateTheme(theme) { this.settings.updateTheme(theme); }
     updateLanguage(lang) { this.settings.updateLanguage(lang); }
-    
-    // Tab Selector
-    openTabSelector(tabs, onSelect, lockedTabId) {
-        this.tabSelector.open(tabs, onSelect, lockedTabId);
-    }
-    
-    toggleTabSwitcher(show) {
-        if (this.tabSwitcherBtn) {
-            this.tabSwitcherBtn.style.display = show ? 'flex' : 'none';
-        }
-    }
 }

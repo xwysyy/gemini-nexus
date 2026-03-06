@@ -47,10 +47,6 @@ export class AppMessageBridge {
     }
 
     dispatch(action, payload, event) {
-        if (action === 'RESTORE_SHORTCUTS') {
-            this.ui.updateShortcuts(payload);
-            return;
-        }
         if (action === 'RESTORE_THEME') {
             this.ui.updateTheme(payload);
             return;
@@ -75,10 +71,6 @@ export class AppMessageBridge {
             }
             return;
         }
-        if (action === 'RESTORE_TEXT_SELECTION') {
-            this.ui.settings.updateTextSelection(payload);
-            return;
-        }
         if (action === 'RESTORE_IMAGE_TOOLS') {
             this.ui.settings.updateImageTools(payload);
             return;
@@ -90,12 +82,6 @@ export class AppMessageBridge {
         
         // Note: RESTORE_CONNECTION_SETTINGS is handled by AppController to update Model List
         
-        if (action === 'RESTORE_BROWSER_LOOP_LIMIT') {
-            // Pass to app controller to store state
-            this.app.handleIncomingMessage(event);
-            return;
-        }
-
         // Forward general messages to App Controller
         this.app.handleIncomingMessage(event);
     }

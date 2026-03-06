@@ -36,8 +36,7 @@ export class MessageBridge {
         if (action === 'FORWARD_TO_BACKGROUND') {
             chrome.runtime.sendMessage(payload)
                 .then(response => {
-                    // If request demands a reply (e.g., GET_LOGS, CHECK_PAGE_CONTEXT), send it back
-                    if (response && (payload.action === 'GET_LOGS' || payload.action === 'CHECK_PAGE_CONTEXT' || payload.action === 'MCP_TEST_CONNECTION' || payload.action === 'MCP_LIST_TOOLS')) {
+                    if (response && (payload.action === 'GET_LOGS' || payload.action === 'CHECK_PAGE_CONTEXT')) {
                         this.frame.postMessage({
                             action: 'BACKGROUND_MESSAGE',
                             payload: response
@@ -67,15 +66,6 @@ export class MessageBridge {
             this.frame.postMessage({ action: 'RESTORE_LANGUAGE', payload: this.state.getCached('geminiLanguage') });
             return;
         }
-        if (action === 'GET_TEXT_SELECTION') {
-            // Some keys might not be in initial bulk fetch if added later, but usually are.
-            // Fallback to async storage if needed, but state.data usually has it.
-            chrome.storage.local.get(['geminiTextSelectionEnabled'], (res) => {
-                const val = res.geminiTextSelectionEnabled !== false;
-                this.frame.postMessage({ action: 'RESTORE_TEXT_SELECTION', payload: val });
-            });
-            return;
-        }
         if (action === 'GET_IMAGE_TOOLS') {
             chrome.storage.local.get(['geminiImageToolsEnabled'], (res) => {
                 const val = res.geminiImageToolsEnabled !== false;
@@ -97,12 +87,7 @@ export class MessageBridge {
                 'geminiThinkingLevel',
                 'geminiOpenaiBaseUrl',
                 'geminiOpenaiApiKey',
-                'geminiOpenaiModel',
-                'geminiMcpEnabled',
-                'geminiMcpTransport',
-                'geminiMcpServerUrl',
-                'geminiMcpServers',
-                'geminiMcpActiveServerId'
+                'geminiOpenaiModel'
             ], (res) => {
                 this.frame.postMessage({ 
                     action: 'RESTORE_CONNECTION_SETTINGS', 
@@ -113,13 +98,7 @@ export class MessageBridge {
                         thinkingLevel: res.geminiThinkingLevel || "low",
                         openaiBaseUrl: res.geminiOpenaiBaseUrl || "",
                         openaiApiKey: res.geminiOpenaiApiKey || "",
-                        openaiModel: res.geminiOpenaiModel || "",
-                        // MCP
-                        mcpEnabled: res.geminiMcpEnabled === true,
-                        mcpTransport: res.geminiMcpTransport || "sse",
-                        mcpServerUrl: res.geminiMcpServerUrl || "http://127.0.0.1:3006/sse",
-                        mcpServers: Array.isArray(res.geminiMcpServers) ? res.geminiMcpServers : null,
-                        mcpActiveServerId: res.geminiMcpActiveServerId || null
+                        openaiModel: res.geminiOpenaiModel || ""
                     } 
                 });
             });
@@ -128,11 +107,9 @@ export class MessageBridge {
 
         // 6. Data Setters (Sync to Storage & Cache)
         if (action === 'SAVE_SESSIONS') this.state.save('geminiSessions', payload);
-        if (action === 'SAVE_SHORTCUTS') this.state.save('geminiShortcuts', payload);
         if (action === 'SAVE_MODEL') this.state.save('geminiModel', payload);
         if (action === 'SAVE_THEME') this.state.save('geminiTheme', payload);
         if (action === 'SAVE_LANGUAGE') this.state.save('geminiLanguage', payload);
-        if (action === 'SAVE_TEXT_SELECTION') this.state.save('geminiTextSelectionEnabled', payload);
         if (action === 'SAVE_IMAGE_TOOLS') this.state.save('geminiImageToolsEnabled', payload);
         if (action === 'SAVE_SIDEBAR_BEHAVIOR') this.state.save('geminiSidebarBehavior', payload);
         if (action === 'SAVE_ACCOUNT_INDICES') this.state.save('geminiAccountIndices', payload);
@@ -146,12 +123,6 @@ export class MessageBridge {
             this.state.save('geminiOpenaiBaseUrl', payload.openaiBaseUrl);
             this.state.save('geminiOpenaiApiKey', payload.openaiApiKey);
             this.state.save('geminiOpenaiModel', payload.openaiModel);
-            // MCP
-            this.state.save('geminiMcpEnabled', payload.mcpEnabled === true);
-            this.state.save('geminiMcpTransport', payload.mcpTransport || "sse");
-            this.state.save('geminiMcpServerUrl', payload.mcpServerUrl || "");
-            this.state.save('geminiMcpServers', Array.isArray(payload.mcpServers) ? payload.mcpServers : []);
-            this.state.save('geminiMcpActiveServerId', payload.mcpActiveServerId || null);
         }
     }
 

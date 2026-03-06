@@ -1,19 +1,13 @@
 
 // sandbox/ui/settings.js
-import { saveShortcutsToStorage, saveThemeToStorage, requestThemeFromStorage, saveLanguageToStorage, requestLanguageFromStorage, saveTextSelectionToStorage, requestTextSelectionFromStorage, saveSidebarBehaviorToStorage, saveImageToolsToStorage, requestImageToolsFromStorage, saveAccountIndicesToStorage, requestAccountIndicesFromStorage, saveConnectionSettingsToStorage, requestConnectionSettingsFromStorage, sendToBackground } from '../../lib/messaging.js';
+import { saveThemeToStorage, saveLanguageToStorage, saveSidebarBehaviorToStorage, saveImageToolsToStorage, requestImageToolsFromStorage, saveAccountIndicesToStorage, requestAccountIndicesFromStorage, saveConnectionSettingsToStorage, requestConnectionSettingsFromStorage, sendToBackground } from '../../lib/messaging.js';
 import { setLanguagePreference, getLanguagePreference } from '../core/i18n.js';
 import { SettingsView } from './settings/view.js';
-import { DEFAULT_SHORTCUTS } from '../../lib/constants.js';
 
 export class SettingsController {
     constructor(callbacks) {
         this.callbacks = callbacks || {};
         
-        // State
-        this.defaultShortcuts = { ...DEFAULT_SHORTCUTS };
-        this.shortcuts = { ...this.defaultShortcuts };
-        
-        this.textSelectionEnabled = true;
         this.imageToolsEnabled = true;
         this.accountIndices = "0";
         
@@ -25,33 +19,17 @@ export class SettingsController {
             thinkingLevel: "low",
             openaiBaseUrl: "",
             openaiApiKey: "",
-            openaiModel: "",
-            // MCP (External Tools)
-            mcpEnabled: false,
-            mcpTransport: "sse",
-            mcpServerUrl: "http://127.0.0.1:3006/sse",
-            mcpServers: [{
-                id: `srv_${Date.now()}`,
-                name: "Local Proxy",
-                transport: "sse",
-                url: "http://127.0.0.1:3006/sse",
-                enabled: true,
-                toolMode: "all",
-                enabledTools: []
-            }],
-            mcpActiveServerId: null
+            openaiModel: ""
         };
 
         // Initialize View
         this.view = new SettingsView({
             onOpen: () => this.handleOpen(),
             onSave: (data) => this.saveSettings(data),
-            onReset: () => this.resetSettings(),
             
             onThemeChange: (theme) => this.setTheme(theme),
             onLanguageChange: (lang) => this.setLanguage(lang),
             
-            onTextSelectionChange: (val) => { this.textSelectionEnabled = (val === 'on' || val === true); saveTextSelectionToStorage(this.textSelectionEnabled); },
             onImageToolsChange: (val) => { this.imageToolsEnabled = (val === 'on' || val === true); saveImageToolsToStorage(this.imageToolsEnabled); },
             onSidebarBehaviorChange: (val) => saveSidebarBehaviorToStorage(val),
             onDownloadLogs: () => this.downloadLogs()
@@ -84,14 +62,12 @@ export class SettingsController {
 
     handleOpen() {
         // Sync state to view
-        this.view.setShortcuts(this.shortcuts);
         this.view.setLanguageValue(getLanguagePreference());
-        this.view.setToggles(this.textSelectionEnabled, this.imageToolsEnabled);
+        this.view.setToggles(this.imageToolsEnabled);
         this.view.setAccountIndices(this.accountIndices);
         this.view.setConnectionSettings(this.connectionData);
         
         // Refresh from storage
-        requestTextSelectionFromStorage();
         requestImageToolsFromStorage();
         requestAccountIndicesFromStorage();
         requestConnectionSettingsFromStorage();
@@ -100,14 +76,6 @@ export class SettingsController {
     }
 
     saveSettings(data) {
-        // Shortcuts
-        this.shortcuts = data.shortcuts;
-        saveShortcutsToStorage(this.shortcuts);
-        
-        // General Toggles
-        this.textSelectionEnabled = data.textSelection;
-        saveTextSelectionToStorage(this.textSelectionEnabled);
-        
         this.imageToolsEnabled = data.imageTools;
         saveImageToolsToStorage(this.imageToolsEnabled);
         
@@ -125,13 +93,7 @@ export class SettingsController {
             thinkingLevel: data.connection.thinkingLevel,
             openaiBaseUrl: data.connection.openaiBaseUrl,
             openaiApiKey: data.connection.openaiApiKey,
-            openaiModel: data.connection.openaiModel,
-            // MCP
-            mcpEnabled: data.connection.mcpEnabled === true,
-            mcpTransport: data.connection.mcpTransport || "sse",
-            mcpServerUrl: data.connection.mcpServerUrl || "",
-            mcpServers: Array.isArray(data.connection.mcpServers) ? data.connection.mcpServers : [],
-            mcpActiveServerId: data.connection.mcpActiveServerId || null
+            openaiModel: data.connection.openaiModel
         };
         
         saveConnectionSettingsToStorage(this.connectionData);
@@ -142,11 +104,6 @@ export class SettingsController {
         }
     }
 
-    resetSettings() {
-        this.view.setShortcuts(this.defaultShortcuts);
-        this.view.setAccountIndices("0");
-    }
-    
     downloadLogs() {
         sendToBackground({ action: 'GET_LOGS' });
     }
@@ -196,21 +153,9 @@ export class SettingsController {
         document.dispatchEvent(new CustomEvent('gemini-language-changed'));
     }
 
-    updateShortcuts(payload) {
-        if (payload) {
-            this.shortcuts = { ...this.defaultShortcuts, ...payload };
-            this.view.setShortcuts(this.shortcuts);
-        }
-    }
-    
-    updateTextSelection(enabled) {
-        this.textSelectionEnabled = enabled;
-        this.view.setToggles(this.textSelectionEnabled, this.imageToolsEnabled);
-    }
-
     updateImageTools(enabled) {
         this.imageToolsEnabled = enabled;
-        this.view.setToggles(this.textSelectionEnabled, this.imageToolsEnabled);
+        this.view.setToggles(this.imageToolsEnabled);
     }
     
     updateConnectionSettings(settings) {
@@ -223,36 +168,6 @@ export class SettingsController {
         }
         
         this.view.setConnectionSettings(this.connectionData);
-    }
-
-    updateMcpTestResult(result) {
-        if (!this.view || !this.view.connection || typeof this.view.connection.setMcpTestStatus !== 'function') return;
-
-        if (result && result.ok === true) {
-            const count = typeof result.toolsCount === 'number' ? result.toolsCount : 0;
-            this.view.connection.setMcpTestStatus(`Connected. Tools: ${count}`, false);
-            return;
-        }
-
-        const err = result && result.error ? result.error : 'Connection failed';
-        this.view.connection.setMcpTestStatus(`Failed: ${err}`, true);
-    }
-
-    updateMcpToolsResult(result) {
-        if (!this.view || !this.view.connection || typeof this.view.connection.setMcpToolsList !== 'function') return;
-
-        if (!result || result.ok !== true) {
-            const err = result && result.error ? result.error : 'Failed to fetch tools';
-            this.view.connection.setMcpTestStatus(`Failed: ${err}`, true);
-            return;
-        }
-
-        this.view.connection.setMcpToolsList(
-            result.serverId || null,
-            result.transport || 'sse',
-            result.url || '',
-            Array.isArray(result.tools) ? result.tools : []
-        );
     }
     
     updateSidebarBehavior(behavior) {

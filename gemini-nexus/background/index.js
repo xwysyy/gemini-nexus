@@ -2,10 +2,7 @@
 // background/index.js
 import { GeminiSessionManager } from './managers/session_manager.js';
 import { ImageManager } from './managers/image_manager.js';
-import { BrowserControlManager } from './managers/control_manager.js';
-import { McpRemoteManager } from './managers/mcp_remote_manager.js';
 import { LogManager, setupConsoleInterception } from './managers/log_manager.js';
-import { setupContextMenus } from './menus.js';
 import { setupMessageListener } from './messages.js';
 import { keepAliveManager } from './managers/keep_alive.js';
 
@@ -23,15 +20,9 @@ console.info("[Gemini Nexus] Background Service Worker Started");
 // Initialize Managers
 const sessionManager = new GeminiSessionManager();
 const imageManager = new ImageManager();
-const controlManager = new BrowserControlManager();
-const mcpManager = new McpRemoteManager({
-    clientName: 'gemini-nexus',
-    clientVersion: chrome.runtime.getManifest().version
-});
 
 // Initialize Modules
-setupContextMenus(imageManager);
-setupMessageListener(sessionManager, imageManager, controlManager, mcpManager, logManager);
+setupMessageListener(sessionManager, imageManager, logManager);
 
 // Initialize Advanced Keep-Alive (Cookie Rotation)
 keepAliveManager.init();

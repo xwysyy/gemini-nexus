@@ -37,15 +37,6 @@
         removeWatermark: isZh ? "去水印" : "Remove Watermark",
         upscale: isZh ? "画质提升" : "Upscale",
         expand: isZh ? "扩图" : "Expand",
-
-        // Actions UI
-        browserControl: isZh ? "浏览器控制" : "Browser Control",
-        pageContext: isZh ? "网页" : "Page",
-        quote: isZh ? "引用" : "Quote",
-        ocr: isZh ? "OCR" : "OCR",
-        translateAction: isZh ? "翻译" : "Translate",
-        snip: isZh ? "截图" : "Snip",
-
         // --- AI Prompts (Centralized) ---
         prompts: {
             // Image Actions

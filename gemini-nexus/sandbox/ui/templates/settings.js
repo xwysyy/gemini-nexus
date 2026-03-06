@@ -2,7 +2,6 @@
 import { ConnectionSettingsTemplate } from './settings/connection.js';
 import { GeneralSettingsTemplate } from './settings/general.js';
 import { AppearanceSettingsTemplate } from './settings/appearance.js';
-import { ShortcutsSettingsTemplate } from './settings/shortcuts.js';
 import { AboutSettingsTemplate } from './settings/about.js';
 
 export const SettingsTemplate = `
@@ -17,8 +16,10 @@ export const SettingsTemplate = `
                 ${ConnectionSettingsTemplate}
                 ${GeneralSettingsTemplate}
                 ${AppearanceSettingsTemplate}
-                ${ShortcutsSettingsTemplate}
                 ${AboutSettingsTemplate}
+                <div class="settings-actions">
+                    <button id="save-settings" class="btn-primary" data-i18n="saveChanges">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>

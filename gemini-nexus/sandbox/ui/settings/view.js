@@ -3,7 +3,6 @@
 import { ConnectionSection } from './sections/connection.js';
 import { GeneralSection } from './sections/general.js';
 import { AppearanceSection } from './sections/appearance.js';
-import { ShortcutsSection } from './sections/shortcuts.js';
 import { AboutSection } from './sections/about.js';
 
 export class SettingsView {
@@ -15,7 +14,6 @@ export class SettingsView {
         this.connection = new ConnectionSection();
         
         this.general = new GeneralSection({
-            onTextSelectionChange: (val) => this.fire('onTextSelectionChange', val),
             onImageToolsChange: (val) => this.fire('onImageToolsChange', val),
             onSidebarBehaviorChange: (val) => this.fire('onSidebarBehaviorChange', val)
         });
@@ -24,9 +22,7 @@ export class SettingsView {
             onThemeChange: (val) => this.fire('onThemeChange', val),
             onLanguageChange: (val) => this.fire('onLanguageChange', val)
         });
-        
-        this.shortcuts = new ShortcutsSection();
-        
+
         this.about = new AboutSection({
             onDownloadLogs: () => this.fire('onDownloadLogs')
         });
@@ -41,13 +37,12 @@ export class SettingsView {
         this.elements = {
             modal: get('settings-modal'),
             btnClose: get('close-settings'),
-            btnSave: get('save-shortcuts'),
-            btnReset: get('reset-shortcuts')
+            btnSave: get('save-settings')
         };
     }
 
     bindEvents() {
-        const { modal, btnClose, btnSave, btnReset } = this.elements;
+        const { modal, btnClose, btnSave } = this.elements;
 
         // Modal actions
         if (btnClose) btnClose.addEventListener('click', () => this.close());
@@ -59,7 +54,6 @@ export class SettingsView {
 
         // Action Buttons
         if (btnSave) btnSave.addEventListener('click', () => this.handleSave());
-        if (btnReset) btnReset.addEventListener('click', () => this.handleReset());
 
         // Keyboard
         document.addEventListener('keydown', (e) => {
@@ -70,24 +64,17 @@ export class SettingsView {
     }
 
     handleSave() {
-        const shortcutsData = this.shortcuts.getData();
         const connectionData = this.connection.getData();
         const generalData = this.general.getData();
         
         const data = {
-            shortcuts: shortcutsData,
             connection: connectionData,
-            textSelection: generalData.textSelection,
             imageTools: generalData.imageTools,
             accountIndices: generalData.accountIndices
         };
         
         this.fire('onSave', data);
         this.close();
-    }
-
-    handleReset() {
-        this.fire('onReset');
     }
 
     // --- Public API ---
@@ -105,11 +92,6 @@ export class SettingsView {
         }
     }
 
-    // Delegation to Shortcuts
-    setShortcuts(shortcuts) {
-        this.shortcuts.setData(shortcuts);
-    }
-
     // Delegation to Appearance
     setThemeValue(theme) {
         this.appearance.setTheme(theme);
@@ -124,8 +106,8 @@ export class SettingsView {
     }
 
     // Delegation to General
-    setToggles(textSelection, imageTools) {
-        this.general.setToggles(textSelection, imageTools);
+    setToggles(imageTools) {
+        this.general.setToggles(imageTools);
     }
     
     setSidebarBehavior(behavior) {

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Gemini Nexus",
   "version": "4.2.3",
-  "permissions": ["sidePanel", "storage", "contextMenus", "scripting", "alarms", "debugger", "downloads", "tabs"],
+  "permissions": ["sidePanel", "storage", "scripting", "alarms", "downloads", "tabs"],
   "host_permissions": [
     "https://gemini.google.com/*",
     "<all_urls>"
@@ -20,15 +20,6 @@
   "action": {
     "default_title": "Open Gemini Chat",
     "default_icon": "logo.png"
-  },
-  "commands": {
-    "_execute_action": {
-      "suggested_key": {
-        "default": "Alt+S",
-        "mac": "Alt+S"
-      },
-      "description": "Open Gemini Nexus Sidebar"
-    }
   },
   "side_panel": {
     "default_path": "sidepanel/index.html"
@@ -70,11 +61,9 @@
         "content/toolbar/image.js",
         "content/toolbar/stream.js", 
         "content/toolbar/utils/input.js",
-        "content/selection.js",
         "content/toolbar/dispatch.js",
         "content/toolbar/crop.js",
         "content/toolbar/controller.js",
-        "content/shortcuts.js",
         "content/messages.js",
         "content/index.js"
       ],

@@ -66,46 +66,12 @@ export class PromptController {
         this.app.isGenerating = true;
         this.ui.setLoading(true);
 
-        const conn = (this.ui && this.ui.settings && this.ui.settings.connectionData) ? this.ui.settings.connectionData : {};
-
-        // Multi-server MCP: collect all enabled servers
-        let mcpServers = [];
-        if (conn && Array.isArray(conn.mcpServers) && conn.mcpServers.length > 0) {
-            mcpServers = conn.mcpServers.filter(s => s && s.enabled !== false && s.url && s.url.trim());
-        } else if (conn && (conn.mcpServerUrl || conn.mcpTransport)) {
-            // Legacy single-server fallback
-            mcpServers = [{
-                id: '_legacy_',
-                name: '',
-                transport: conn.mcpTransport || 'sse',
-                url: conn.mcpServerUrl || '',
-                enabled: true,
-                toolMode: 'all',
-                enabledTools: []
-            }];
-        }
-
-        const enableMcpTools = conn.mcpEnabled === true && mcpServers.length > 0;
-
-        // For backward compatibility, also send first server info as legacy fields
-        const firstServer = mcpServers[0] || null;
-
         sendToBackground({
             action: "SEND_PROMPT",
             text: text,
             files: files,
             model: selectedModel,
             includePageContext: this.app.pageContextActive,
-            enableBrowserControl: this.app.browserControlActive,
-            enableMcpTools: enableMcpTools,
-            // Multi-server: pass all enabled servers
-            mcpServers: mcpServers,
-            // Legacy fields for backward compatibility
-            mcpTransport: firstServer ? (firstServer.transport || "sse") : "sse",
-            mcpServerUrl: firstServer ? (firstServer.url || "") : "",
-            mcpServerId: firstServer ? firstServer.id : null,
-            mcpToolMode: firstServer && firstServer.toolMode ? firstServer.toolMode : 'all',
-            mcpEnabledTools: firstServer && Array.isArray(firstServer.enabledTools) ? firstServer.enabledTools : [],
             sessionId: currentId
         });
     }

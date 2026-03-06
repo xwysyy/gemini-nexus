@@ -15,13 +15,6 @@ export function saveSessionsToStorage(sessions) {
     }, '*');
 }
 
-export function saveShortcutsToStorage(shortcuts) {
-    window.parent.postMessage({
-        action: 'SAVE_SHORTCUTS',
-        payload: shortcuts
-    }, '*');
-}
-
 export function requestThemeFromStorage() {
     window.parent.postMessage({ action: 'GET_THEME' }, '*');
 }
@@ -41,17 +34,6 @@ export function saveLanguageToStorage(lang) {
     window.parent.postMessage({
         action: 'SAVE_LANGUAGE',
         payload: lang
-    }, '*');
-}
-
-export function requestTextSelectionFromStorage() {
-    window.parent.postMessage({ action: 'GET_TEXT_SELECTION' }, '*');
-}
-
-export function saveTextSelectionToStorage(enabled) {
-    window.parent.postMessage({
-        action: 'SAVE_TEXT_SELECTION',
-        payload: enabled
     }, '*');
 }
 

@@ -5,9 +5,9 @@ import { QuickAskHandler } from './session/quick_ask_handler.js';
 import { ContextHandler } from './session/context_handler.js';
 
 export class SessionMessageHandler {
-    constructor(sessionManager, imageHandler, controlManager, mcpManager) {
+    constructor(sessionManager, imageHandler) {
         this.sessionManager = sessionManager;
-        this.promptHandler = new PromptHandler(sessionManager, controlManager, mcpManager);
+        this.promptHandler = new PromptHandler(sessionManager);
         this.quickAskHandler = new QuickAskHandler(sessionManager, imageHandler);
         this.contextHandler = new ContextHandler(sessionManager);
     }

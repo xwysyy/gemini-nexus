@@ -20,21 +20,6 @@
         }
 
         handle(request, sender, sendResponse) {
-            // Context Menu Actions
-            if (request.action === "CONTEXT_MENU_ACTION") {
-                if (this.toolbarController) {
-                    this.toolbarController.handleContextAction(request.mode);
-                }
-                sendResponse({status: "ok"});
-                return true;
-            }
-
-            // Focus Input
-            if (request.action === "FOCUS_INPUT") {
-                this._focusInput(sendResponse);
-                return true;
-            }
-
             // Start Selection Mode (Screenshot received)
             if (request.action === "START_SELECTION") {
                 this.captureSource = request.source; 
@@ -80,12 +65,6 @@
                 return true;
             }
 
-            // Get Active Selection
-            if (request.action === "GET_SELECTION") {
-                sendResponse({ selection: window.getSelection().toString() });
-                return true;
-            }
-
             // Get Full Page Content
             if (request.action === "GET_PAGE_CONTENT") {
                 this._getPageContent(sendResponse);
@@ -93,22 +72,6 @@
             }
             
             return false;
-        }
-
-        _focusInput(sendResponse) {
-            try {
-                const inputBox = document.querySelector('div[contenteditable="true"][role="textbox"]');
-                if (inputBox) {
-                    inputBox.focus();
-                    const selection = window.getSelection();
-                    if (selection.rangeCount > 0) selection.removeAllRanges();
-                    sendResponse({status: "ok"});
-                } else {
-                    sendResponse({status: "error", msg: "DOM_NOT_FOUND"});
-                }
-            } catch (e) {
-                sendResponse({status: "error", msg: e.message});
-            }
         }
 
         _getPageContent(sendResponse) {

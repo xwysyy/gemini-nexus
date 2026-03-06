@@ -7,12 +7,6 @@ export function bindAppEvents(app, ui, setResizeRef) {
     // New Chat Buttons
     document.getElementById('new-chat-header-btn').addEventListener('click', () => app.handleNewChat());
     
-    // Tab Switcher Button
-    const tabSwitcherBtn = document.getElementById('tab-switcher-btn');
-    if (tabSwitcherBtn) {
-        tabSwitcherBtn.addEventListener('click', () => app.handleTabSwitcher());
-    }
-    
     // Open Full Page Button
     const openFullPageBtn = document.getElementById('open-full-page-btn');
     if (openFullPageBtn) {
@@ -36,20 +30,6 @@ export function bindAppEvents(app, ui, setResizeRef) {
     }
 
     // Tools
-    
-    // Browser Control (Functional Toggle)
-    const browserControlBtn = document.getElementById('browser-control-btn');
-    if (browserControlBtn) {
-        browserControlBtn.addEventListener('click', () => {
-            app.toggleBrowserControl();
-            if (ui.inputFn) ui.inputFn.focus();
-        });
-    }
-
-    document.getElementById('quote-btn').addEventListener('click', () => {
-        sendToBackground({ action: "GET_ACTIVE_SELECTION" });
-        if (ui.inputFn) ui.inputFn.focus();
-    });
 
     document.getElementById('ocr-btn').addEventListener('click', () => {
         app.setCaptureMode('ocr');

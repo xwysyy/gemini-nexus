@@ -23,13 +23,6 @@
             // Initialize Dispatcher with reference to this controller
             this.dispatcher = new window.GeminiToolbarDispatcher(this);
 
-            // Selection Observer
-            this.selectionObserver = new window.GeminiSelectionObserver({
-                onSelection: this.handleSelection.bind(this),
-                onClear: this.handleSelectionClear.bind(this),
-                onClick: this.handleClick.bind(this)
-            });
-
             // State
             this.visible = false;
             this.currentSelection = "";
@@ -37,8 +30,6 @@
             this.lastMousePoint = null;
             this.lastSessionId = null;
             this.currentMode = 'ask'; // 默认模式
-            this.isSelectionEnabled = true;
-
             // Bind Action Handler
             this.handleAction = this.handleAction.bind(this);
             
@@ -96,31 +87,8 @@
             this.ui.updateModelList(settings, result.geminiModel);
         }
         
-        setSelectionEnabled(enabled) {
-            this.isSelectionEnabled = enabled;
-            if (!enabled) {
-                this.handleSelectionClear();
-            }
-        }
-
         setImageToolsEnabled(enabled) {
             this.imageDetector.setEnabled(enabled);
-        }
-
-        /**
-         * 处理来自右键菜单的动作指令
-         */
-        handleContextAction(mode) {
-            this.currentMode = mode;
-
-            if (mode === 'ask') {
-                this.showGlobalInput(false);
-            } else if (mode === 'page_chat') {
-                this.showGlobalInput(true); // 带网页上下文打开
-            } else {
-                // 需要截图的操作模式：ocr, snip, screenshot_translate
-                chrome.runtime.sendMessage({ action: "INITIATE_CAPTURE" });
-            }
         }
 
         /**
@@ -197,8 +165,6 @@
         }
 
         handleSelection(data) {
-            if (!this.isSelectionEnabled) return;
-            
             const { text, rect, mousePoint } = data;
             this.currentSelection = text;
             this.lastRect = rect;

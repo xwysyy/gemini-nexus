@@ -2,14 +2,6 @@
 export const GeneralSettingsTemplate = `
 <div class="setting-group">
     <h4 data-i18n="general">General</h4>
-    
-    <div class="shortcut-row" style="margin-bottom: 12px;">
-        <div style="flex: 1;">
-            <label data-i18n="textSelection" style="font-weight: 500; display: block; margin-bottom: 2px;">Text Selection Toolbar</label>
-            <span class="setting-desc" data-i18n="textSelectionDesc">Show floating toolbar when selecting text.</span>
-        </div>
-        <input type="checkbox" id="text-selection-toggle" style="width: 20px; height: 20px; cursor: pointer;">
-    </div>
 
     <div class="shortcut-row" style="margin-bottom: 12px;">
         <div style="flex: 1;">

@@ -7,14 +7,12 @@ import { UIMessageHandler } from './handlers/ui.js';
  * Sets up the global runtime message listener.
  * @param {GeminiSessionManager} sessionManager 
  * @param {ImageHandler} imageHandler 
- * @param {BrowserControlManager} controlManager
- * @param {McpRemoteManager} mcpManager
  * @param {LogManager} logManager
  */
-export function setupMessageListener(sessionManager, imageHandler, controlManager, mcpManager, logManager) {
+export function setupMessageListener(sessionManager, imageHandler, logManager) {
     
-    const sessionHandler = new SessionMessageHandler(sessionManager, imageHandler, controlManager, mcpManager);
-    const uiHandler = new UIMessageHandler(imageHandler, controlManager, mcpManager);
+    const sessionHandler = new SessionMessageHandler(sessionManager, imageHandler);
+    const uiHandler = new UIMessageHandler(imageHandler);
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         

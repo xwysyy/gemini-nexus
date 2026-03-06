@@ -14,12 +14,9 @@ export class StateManager {
         chrome.storage.local.get([
             'geminiSessions', 
             'pendingSessionId', 
-            'pendingMode', // Fetch pending mode (e.g. browser_control)
-            'geminiShortcuts',
             'geminiModel',
             'pendingImage',
             'geminiSidebarBehavior',
-            'geminiTextSelectionEnabled',
             'geminiImageToolsEnabled',
             'geminiAccountIndices',
             'geminiApiKey',
@@ -28,12 +25,7 @@ export class StateManager {
             'geminiProvider',
             'geminiOpenaiBaseUrl',
             'geminiOpenaiApiKey',
-            'geminiOpenaiModel',
-            'geminiMcpEnabled',
-            'geminiMcpTransport',
-            'geminiMcpServerUrl',
-            'geminiMcpServers',
-            'geminiMcpActiveServerId'
+            'geminiOpenaiModel'
         ], (result) => {
             this.data = result;
             this.trySendInitData();
@@ -78,24 +70,16 @@ export class StateManager {
                 thinkingLevel: this.data.geminiThinkingLevel || "low",
                 openaiBaseUrl: this.data.geminiOpenaiBaseUrl || "",
                 openaiApiKey: this.data.geminiOpenaiApiKey || "",
-                openaiModel: this.data.geminiOpenaiModel || "",
-                // MCP
-                mcpEnabled: this.data.geminiMcpEnabled === true,
-                mcpTransport: this.data.geminiMcpTransport || "sse",
-                mcpServerUrl: this.data.geminiMcpServerUrl || "http://127.0.0.1:3006/sse",
-                mcpServers: Array.isArray(this.data.geminiMcpServers) ? this.data.geminiMcpServers : null,
-                mcpActiveServerId: this.data.geminiMcpActiveServerId || null
+                openaiModel: this.data.geminiOpenaiModel || ""
             } 
         });
 
         this.frame.postMessage({ action: 'RESTORE_SIDEBAR_BEHAVIOR', payload: this.data.geminiSidebarBehavior || 'auto' });
         this.frame.postMessage({ action: 'RESTORE_SESSIONS', payload: this.data.geminiSessions || [] });
-        this.frame.postMessage({ action: 'RESTORE_SHORTCUTS', payload: this.data.geminiShortcuts || null });
         
         // Model restore should happen after connection settings to ensure the correct list is active
         this.frame.postMessage({ action: 'RESTORE_MODEL', payload: this.data.geminiModel || 'gemini-2.5-flash' });
         
-        this.frame.postMessage({ action: 'RESTORE_TEXT_SELECTION', payload: this.data.geminiTextSelectionEnabled !== false });
         this.frame.postMessage({ action: 'RESTORE_IMAGE_TOOLS', payload: this.data.geminiImageToolsEnabled !== false });
         this.frame.postMessage({ action: 'RESTORE_ACCOUNT_INDICES', payload: this.data.geminiAccountIndices || "0" });
 
@@ -119,17 +103,7 @@ export class StateManager {
             delete this.data.pendingImage;
         }
 
-        // 4. Pending Actions (Browser Control Mode)
-        if (this.data.pendingMode === 'browser_control') {
-            this.frame.postMessage({
-                action: 'BACKGROUND_MESSAGE',
-                payload: { action: 'ACTIVATE_BROWSER_CONTROL' }
-            });
-            chrome.storage.local.remove('pendingMode');
-            delete this.data.pendingMode;
-        }
-
-        // 5. LocalStorage Sync (Theme/Lang)
+        // 4. LocalStorage Sync (Theme/Lang)
         const cachedTheme = localStorage.getItem('geminiTheme') || 'system';
         const cachedLang = localStorage.getItem('geminiLanguage') || 'system';
         
