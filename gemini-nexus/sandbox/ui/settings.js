@@ -195,8 +195,8 @@ export class SettingsController {
 
         try {
             const [starRes, releaseRes] = await Promise.all([
-                fetch('https://api.github.com/repos/yeahhe365/gemini-nexus'),
-                fetch('https://api.github.com/repos/yeahhe365/gemini-nexus/releases/latest')
+                fetch('https://api.github.com/repos/xwysyy/gemini-nexus'),
+                fetch('https://api.github.com/repos/xwysyy/gemini-nexus/releases/latest')
             ]);
 
             if (starRes.ok) {

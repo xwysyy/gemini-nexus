@@ -14,8 +14,8 @@ export class PromptBuilder {
         if (request.includePageContext) {
             const pageContext = await getActiveTabContext({
                 includeImages: request.includePageImagesContext === true,
-                maxImages: 5,
-                maxCandidates: 15
+                maxImages: 10,
+                maxCandidates: 30
             }, this.imageHandler);
             
             if (pageContext?.url) {

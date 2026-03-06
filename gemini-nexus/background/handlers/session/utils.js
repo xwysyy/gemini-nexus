@@ -3,12 +3,12 @@
 
 import { dataUrlToBlob } from '../../../lib/utils.js';
 
-const PAGE_CONTEXT_IMAGE_MAX_IMAGES = 5;
-const PAGE_CONTEXT_IMAGE_MAX_CANDIDATES = 15;
+const PAGE_CONTEXT_IMAGE_MAX_IMAGES = 10;
+const PAGE_CONTEXT_IMAGE_MAX_CANDIDATES = 30;
 const PAGE_CONTEXT_IMAGE_MAX_SIDE = 1280;
 const PAGE_CONTEXT_IMAGE_QUALITY = 0.75;
 const PAGE_CONTEXT_IMAGE_MAX_BYTES = 500 * 1024;
-const PAGE_CONTEXT_IMAGE_MAX_TOTAL_BYTES = 2 * 1024 * 1024;
+const PAGE_CONTEXT_IMAGE_MAX_TOTAL_BYTES = 5 * 1024 * 1024;
 
 async function getTargetTab(specificTabId = null) {
     if (specificTabId) {

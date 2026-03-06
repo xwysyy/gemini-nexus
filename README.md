@@ -1,6 +1,6 @@
 
 <div align="center">
-  <a href="https://github.com/yeahhe365/gemini-nexus">
+  <a href="https://github.com/xwysyy/gemini-nexus">
     <img src="https://github.com/user-attachments/assets/5c5c1f06-7fb2-43b7-b467-f08680d76e70" width="160" height="160" alt="Gemini Nexus Logo">
   </a>
 
@@ -50,27 +50,10 @@
     *   **水印消除**：内置 `watermark_remover.js` 算法，显著提升生成图像的可视化质量。
 *   **🛡️ 安全渲染**：所有 Markdown、LaTeX 公式及代码块均在 `sandbox` 隔离环境中渲染，确保主页面安全。
 
----
-
-## ❤️ 赞助与支持
-
-如果您觉得 Gemini Nexus 提升了您的工作效率，欢迎请开发者喝杯咖啡，支持项目的持续维护！☕
-
-**赞赏通道（爱发电）：** [https://afdian.com/a/gemini-nexus](https://afdian.com/a/gemini-nexus)
-
-<div align="center">
-  <a href="https://afdian.com/a/gemini-nexus" target="_blank">
-    <img src="https://github.com/user-attachments/assets/b833ac9b-ca8d-4ff6-b83c-f3b2b0094aa8" width="200" alt="afdian-yeahhe">
-  </a>
-  <p><b>扫描上方二维码或 <a href="https://afdian.com/a/gemini-nexus" target="_blank">点击此处</a> 前往爱发电支持我</b></p>
-</div>
-
----
-
 ## 🚀 快速开始
 
 ### 安装步骤
-1.  从 [Releases](https://github.com/yeahhe365/gemini-nexus/releases) 下载最新 ZIP 包并解压。
+1.  从 [Releases](https://github.com/xwysyy/gemini-nexus/releases) 下载最新 ZIP 包并解压。
 2.  Chrome 访问 `chrome://extensions/`，右上角开启 **“开发者模式”**。
 3.  点击 **“加载已解压的扩展程序”**，选择解压后的文件夹即可。
 

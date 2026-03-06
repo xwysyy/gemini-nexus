@@ -14,7 +14,7 @@ export const GeneralSettingsTemplate = `
     <div class="shortcut-row" style="margin-bottom: 12px;">
         <div style="flex: 1;">
             <label data-i18n="pageContextImagesToggle" style="font-weight: 500; display: block; margin-bottom: 2px;">Attach Page Images in Page Chat</label>
-            <span class="setting-desc" data-i18n="pageContextImagesToggleDesc">When page chat is enabled, attach up to 5 compressed images from the current page as temporary context.</span>
+            <span class="setting-desc" data-i18n="pageContextImagesToggleDesc">When page chat is enabled, attach up to 10 compressed images from the current page as temporary context.</span>
         </div>
         <input type="checkbox" id="page-context-images-toggle" style="width: 20px; height: 20px; cursor: pointer;">
     </div>
