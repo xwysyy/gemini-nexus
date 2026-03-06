@@ -82,7 +82,7 @@ export class StateManager {
         this.frame.postMessage({ action: 'RESTORE_MODEL', payload: this.data.geminiModel || 'gemini-2.5-flash' });
         
         this.frame.postMessage({ action: 'RESTORE_IMAGE_TOOLS', payload: this.data.geminiImageToolsEnabled !== false });
-        this.frame.postMessage({ action: 'RESTORE_PAGE_CONTEXT_IMAGES', payload: this.data.geminiPageContextImagesEnabled === true });
+        this.frame.postMessage({ action: 'RESTORE_PAGE_CONTEXT_IMAGES', payload: this.data.geminiPageContextImagesEnabled !== false });
         this.frame.postMessage({ action: 'RESTORE_ACCOUNT_INDICES', payload: this.data.geminiAccountIndices || "0" });
 
         // 2. Pending Actions (Session Switch)

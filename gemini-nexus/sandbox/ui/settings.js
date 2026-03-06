@@ -9,7 +9,7 @@ export class SettingsController {
         this.callbacks = callbacks || {};
         
         this.imageToolsEnabled = true;
-        this.pageContextImagesEnabled = false;
+        this.pageContextImagesEnabled = true;
         this.accountIndices = "0";
         
         // Connection State

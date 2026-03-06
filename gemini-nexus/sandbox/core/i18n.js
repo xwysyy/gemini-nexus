@@ -76,6 +76,8 @@ export const translations = {
         "loadingImage": "Loading image...",
         "readingPage": "Reading page content...",
         "pageReadSuccess": "Read page content (~{count} chars)",
+        "pageImagesAttachedStatus": "Attached {count} page image(s) as context.",
+        "pageImagesUnavailableStatus": "No eligible page images were attached.",
         
         // Tooltips
         "toggleHistory": "Chat History",
@@ -169,6 +171,8 @@ export const translations = {
         "loadingImage": "正在加载图片...",
         "readingPage": "正在读取网页内容...",
         "pageReadSuccess": "已读取网页内容 (约 {count} 字)",
+        "pageImagesAttachedStatus": "已附带 {count} 张页面图片作为上下文。",
+        "pageImagesUnavailableStatus": "当前页面没有可附带的图片上下文。",
 
         // Tooltips
         "toggleHistory": "历史记录",

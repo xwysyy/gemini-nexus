@@ -30,6 +30,13 @@ export class PromptHandler {
             try {
                 // 1. Build Initial Prompt (with Context separated)
                 const buildResult = await this.builder.build(request);
+                if (request.includePageContext && request.includePageImagesContext) {
+                    chrome.runtime.sendMessage({
+                        action: "PAGE_CONTEXT_IMAGES_RESULT",
+                        count: buildResult.contextImageCount || 0
+                    }).catch(() => {});
+                }
+
                 const mergedFiles = [
                     ...(Array.isArray(request.files) ? request.files : []),
                     ...(Array.isArray(buildResult.contextFiles) ? buildResult.contextFiles : [])

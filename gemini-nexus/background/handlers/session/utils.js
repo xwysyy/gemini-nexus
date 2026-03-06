@@ -117,7 +117,7 @@ async function compressPageContextImage(dataUrl, maxBytes) {
     return best;
 }
 
-async function collectPageContextImages(candidates, imageHandler) {
+async function collectPageContextImages(candidates, imageHandler, maxImages = PAGE_CONTEXT_IMAGE_MAX_IMAGES) {
     if (!imageHandler || !Array.isArray(candidates) || candidates.length === 0) {
         return [];
     }
@@ -127,7 +127,7 @@ async function collectPageContextImages(candidates, imageHandler) {
 
     for (const candidate of candidates) {
         if (!candidate || !candidate.url) continue;
-        if (files.length >= PAGE_CONTEXT_IMAGE_MAX_IMAGES) break;
+        if (files.length >= maxImages) break;
 
         try {
             const fetched = await imageHandler.fetchImage(candidate.url);
@@ -176,7 +176,11 @@ export async function getActiveTabContext(options = {}, imageHandler = null) {
             };
 
             if (includeImages) {
-                context.images = await collectPageContextImages(response?.images || [], imageHandler);
+                context.images = await collectPageContextImages(
+                    response?.images || [],
+                    imageHandler,
+                    options.maxImages || PAGE_CONTEXT_IMAGE_MAX_IMAGES
+                );
             }
 
             return context;

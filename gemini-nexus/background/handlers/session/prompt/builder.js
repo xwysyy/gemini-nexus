@@ -40,7 +40,8 @@ export class PromptBuilder {
         return {
             systemInstruction: systemPreamble,
             userPrompt: request.text,
-            contextFiles
+            contextFiles,
+            contextImageCount: contextFiles.length
         };
     }
 }

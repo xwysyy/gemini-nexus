@@ -75,7 +75,7 @@ export class MessageBridge {
         }
         if (action === 'GET_PAGE_CONTEXT_IMAGES') {
             chrome.storage.local.get(['geminiPageContextImagesEnabled'], (res) => {
-                const val = res.geminiPageContextImagesEnabled === true;
+                const val = res.geminiPageContextImagesEnabled !== false;
                 this.frame.postMessage({ action: 'RESTORE_PAGE_CONTEXT_IMAGES', payload: val });
             });
             return;

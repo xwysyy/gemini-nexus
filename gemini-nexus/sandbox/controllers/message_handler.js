@@ -36,6 +36,11 @@ export class MessageHandler {
             return;
         }
 
+        if (request.action === "PAGE_CONTEXT_IMAGES_RESULT") {
+            this.handlePageContextImagesResult(request);
+            return;
+        }
+
         // 1. AI Reply
         if (request.action === "GEMINI_REPLY") {
             this.handleGeminiReply(request);
@@ -101,6 +106,16 @@ export class MessageHandler {
             this.app.isGenerating = true;
             this.ui.setLoading(true);
         }
+    }
+
+    handlePageContextImagesResult(request) {
+        const count = Number(request.count) || 0;
+        if (count > 0) {
+            this.ui.updateStatus(t('pageImagesAttachedStatus').replace('{count}', String(count)));
+            return;
+        }
+
+        this.ui.updateStatus(t('pageImagesUnavailableStatus'));
     }
 
     handleGeminiReply(request) {
